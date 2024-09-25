@@ -1,0 +1,161 @@
+﻿@model ClinicApplication.Models.ClinicHomeViewModel
+
+<div class="titleContainer">
+    <h1>Welcome, @Model.customer.Name!</h1>
+    <p>您的登入帳號: @Model.customer.Id</p>
+    <p>&nbsp;</p>
+    @* <p>您機構的所在地址: @Model.customer.Address</p> *@
+</div>
+
+<br/>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5>總筆數:</h5>
+    <span id="totalItems" style="font-size: 28px" class="badge badge-primary badge-xl">@Model.TestDOCList.Count() 筆</span>
+</div>
+
+<div class="container" style="padding: 0">
+    <!-- Form Group for Start Date -->
+    <div class="mb-3 row">
+        <label for="startDate" class="col-sm-2 col-form-label">開始日期：</label>
+        <div class="col-sm-10">
+            <input type="text" id="startDate" class="form-control" placeholder="請選擇開始日期">
+        </div>
+    </div>
+
+    <!-- Form Group for End Date -->
+    <div class="mb-3 row">
+        <label for="endDate" class="col-sm-2 col-form-label">結束日期：</label>
+        <div class="col-sm-10">
+            <input type="text" id="endDate" class="form-control" placeholder="請選擇結束日期">
+        </div>
+    </div>
+</div>
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" id="searchInput" placeholder="輸入關鍵字搜尋" aria-label="輸入關鍵字搜尋" aria-describedby="basic-addon2">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" onclick="filterTable(`@Model.customer.Id`)">搜尋</button>
+    </div>
+</div>
+
+<div id="loadingIndicator" class="fullscreen-loader" style="display: none">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<table id="myTable" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>SNO</th>
+            <th>送檢姓名</th>
+            <th>檢驗序號</th>
+            <th>是否放行</th>
+            <th>簽收日期</th>
+            <th>查看報告</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TestDOCList)
+        {
+            <tr>
+                <td>@item.SNO</td>
+                <td>@item.SubName</td>
+                <td>@item.OrderNo</td>
+                <td style="color: @(item.IsPass ==true ? "green" : "red")">@(item.IsPass == true ? "是" : "否")</td>
+                <td>@item.RecDate</td>
+                <td>
+                    <button type="button" class="btn btn-success" onclick="window.open('@Url.Action("ClinicDetails", "Home", new { id = item.SNO })', '_blank')">查看報告</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // Get the current date
+    var now = new Date();
+
+    // Initialize Flatpickr for Start Date with the current date
+    flatpickr("#startDate", {
+        dateFormat: "Y-m-d", // Year-Month-Day format
+        defaultDate: now,    // Set the initial value to the current date
+        onChange: function (selectedDates, dateStr, instance) {
+            console.log("Start Date Selected:", dateStr);
+            filterTable(`@Model.customer.Id`);
+        }
+    });
+
+    // Initialize Flatpickr for End Date with the current date
+    flatpickr("#endDate", {
+        dateFormat: "Y-m-d", // Year-Month-Day format
+        defaultDate: now,    // Set the initial value to the current date
+        onChange: function (selectedDates, dateStr, instance) {
+            console.log("End Date Selected:", dateStr);
+            filterTable(`@Model.customer.Id`);
+        }
+    });
+</script>
+<script>
+    function filterTable(CustID) {
+        document.getElementById("loadingIndicator").style.display = "flex";
+
+        var searchInput = document.getElementById("searchInput");
+        var keywords = searchInput.value;
+
+        var startDate = $("#startDate").val();
+        console.log(startDate);
+
+        var endDate = $("#endDate").val();
+		console.log(endDate);
+
+        // Make an AJAX POST request to the server
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/Home/GetClinicTestDoscList", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Parse the JSON response and insert the rows into the table
+                var responseObject = JSON.parse(xhr.responseText);
+                
+                if (responseObject.isSuccess) {
+                    var tableBody = document.getElementById("myTable").getElementsByTagName("tbody")[0];
+                    tableBody.innerHTML = "";
+
+                    responseObject.data.forEach(function (item) {
+                        var row = tableBody.insertRow();
+
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+                        var cell5 = row.insertCell(4);
+                        var cell6 = row.insertCell(5);
+
+                        cell1.innerHTML = item.sno;
+                        cell2.innerHTML = item.subName;
+                        cell3.innerHTML = item.orderNo;
+                        cell4.innerHTML = item.isPass ? "是" : "否";
+                        cell5.innerHTML = item.recDate;
+                        cell6.innerHTML = '<button type="button" class="btn btn-success" onclick="window.open(\'' + '@Url.Action("ClinicDetails", "Home")' + '?id=' + item.sno + '\', \'_blank\')">查看報告</button>';
+                    });
+
+                    document.getElementById("totalItems").textContent = responseObject.data.length + " 筆";
+
+                    document.getElementById("loadingIndicator").style.setProperty("display", "none", "important");
+                } else {
+                    document.getElementById("loadingIndicator").style.setProperty("display", "none", "important");
+                    alert(responseObject.message);
+                }
+            }
+        };
+        xhr.onerror = function () {
+            // Handle error
+            console.error("Request failed");
+            // Hide the loading indicator
+            document.getElementById("loadingIndicator").style.setProperty("display", "none", "important");
+        };
+        xhr.send(JSON.stringify({ CustID: CustID, Keywords: keywords, BeginDate: startDate, EndDate: endDate }));
+    }
+</script>

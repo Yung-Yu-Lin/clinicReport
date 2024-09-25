@@ -1,0 +1,166 @@
+﻿@model List<ClinicApplication.Models.InspectionViewModel>
+
+<div class="container" id="report">
+    <!-- Header Section -->
+    <div class="header text-center">
+        <h1 style="color: dodgerblue">現代醫事檢驗所</h1>
+        <p>檢驗報告單</p>
+        <p>電話: (06)-633-2100 | 地址: 台南市新營區中山路236號</p>
+    </div>
+
+    <!-- Patient Details Section -->
+    <div class="patient-details">
+        <h3 class="section-title">受檢者資訊</h3>
+        <div class="row">
+            <div class="col-md-6" style="font-size: 18px">
+                <strong>姓名:</strong> @Model.FirstOrDefault().Name<br>
+                <strong>生日:</strong> @Model.FirstOrDefault().DateOfBirth<br>
+                <strong>年齡:</strong> @Model.FirstOrDefault().Age<br>
+                <strong>身分證字號:</strong> @Model.FirstOrDefault().IDNumber<br>
+                <strong>性別:</strong> @Model.FirstOrDefault().Gender<br>
+            </div>
+            <div class="col-md-6" style="font-size: 18px">
+                <strong>簽收日期:</strong> @Model.FirstOrDefault().ReceiptDate<br>
+                <strong style="color: blue">檢驗序號:</strong> <strong style="color: blue">@Model.FirstOrDefault().InspectionSerialNo</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hematology Results Section -->
+    <div class="hematology-results">
+        <h3 class="section-title d-flex justify-content-between align-items-center">
+            <span>檢驗項目，共檢測 @Model.Count 項</span>
+@*             <button type="button" class="btn btn-warning" onclick="generatePDF('@Model.FirstOrDefault().SNO')">
+                <i class="fas fa-file-pdf"></i> 列印報告
+            </button> *@
+            <button id="btnPrint" type="button" class="btn btn-warning" onclick="generatePDF(`@Model.FirstOrDefault().InspectionSerialNo`, `@Model.FirstOrDefault().Name`)">
+                <i class="fas fa-file-pdf"></i> 列印報告
+            </button>
+        </h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>項次</th>
+                    <th>檢驗項目名稱</th>
+                    <th>檢驗結果</th>
+                    <th>判讀</th>
+                    <th>生物參考區間</th>
+                    <th>單位</th>
+                    <th>報告說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model[i];
+                    <tr>
+						<td>@(i + 1)</td>
+                        <td>@item.InspectionItem<br />@item.ChineseName</td>
+                        <td>@item.Result</td>
+                        <td>@item.Interpretation</td>
+                        <td>@item.BiologicalReferenceRange</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Remarks</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Treatment Plan Section -->
+    <div class="treatment-plan">
+        <h3 class="section-title">送檢單位</h3>
+        <ul>
+            <li><strong>送檢單位:</strong> @Model.FirstOrDefault().SubmittingUnit</li>
+            <li><strong>電話:</strong> @Model.FirstOrDefault().Phone</li>
+            <li><strong>地址:</strong> @Model.FirstOrDefault().Address</li>
+            <li><strong>機構代碼:</strong> @Model.FirstOrDefault().InstitutionCode</li>
+        </ul>
+    </div>
+
+    <!-- Signature Section -->
+    <div class="signature">
+        @if (@Model.FirstOrDefault().Reporter == null)
+        {
+            <p style="color: red">*報告尚未完成*</p>
+        }
+        @if (@Model.FirstOrDefault().Reporter != null)
+        {
+            <p>報告者: @Model.FirstOrDefault().Reporter</p>
+        }
+        @if (@Model.FirstOrDefault().Reviewer == null)
+        {
+            <p style="color: red">*報告尚未覆核*</p>
+        }
+        @if (@Model.FirstOrDefault().Reviewer != null)
+        {
+            <p>覆核者: @Model.FirstOrDefault().Reviewer</p>
+            <p>覆核時間: @Model.FirstOrDefault().AuditDate @Model.FirstOrDefault().AuditTime</p>
+        }
+        <img style="display: inline-block" src="/images/companyStamp.png" alt="Inspection Organization Signature">
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Copyright © 2024 現代醫事檢驗所. 保留一切權利。</p>
+    </div>
+</div>
+
+<script>
+    function generatePDF(code, patientName) {
+        // Hide the button
+        var btnPrint = document.getElementById("btnPrint");
+        if (btnPrint) {
+            btnPrint.style.display = 'none';
+        }
+
+        // Prepare PDF options
+        var element = document.getElementById("report");
+        var opt = {
+            margin: [0.5, 0.5, 0.5, 0.5], // top, right, bottom, left
+            filename: `${code} - ${patientName} 檢驗報告.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: [8.5, 11], orientation: 'portrait' } // Letter size
+        };
+
+        // Generate the PDF
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+            // Calculate scale to fit content
+            var pdfPageHeight = pdf.internal.pageSize.height;
+            var pdfPageWidth = pdf.internal.pageSize.width;
+            var contentHeight = element.offsetHeight * (pdf.internal.pageSize.width / element.offsetWidth);
+
+            // Calculate scale factor
+            var scale = Math.min(pdfPageHeight / contentHeight, pdfPageWidth / element.offsetWidth);
+
+            // Apply scaling
+            if (scale < 1) {
+                pdf.internal.scale(scale);
+            }
+
+            // Show the button again after PDF generation is complete
+            if (btnPrint) {
+                btnPrint.style.display = 'inline'; // or 'block', depending on your layout
+            }
+        }).save();
+    }
+</script>
+
+
+@* <script>
+    function generatePDF(sno) {
+
+        fetch(`/PDF/GeneratePdf?sno=${sno}`, {
+            method: 'GET',
+        })
+            .then(response => response.blob()) // Get the PDF as a blob
+            .then(blob => {
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'ClinicReport.pdf';
+                link.click();
+            })
+            .catch(error => console.error('Error generating PDF:', error));
+    }
+</script> *@

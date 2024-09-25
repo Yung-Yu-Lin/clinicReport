@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "即將推出";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Update this to match your predefined layout
+}
+
+@section Styles {
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .coming-soon {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+            .coming-soon h1 {
+                font-size: 3rem;
+                color: #007bff;
+                margin-bottom: 20px;
+            }
+
+            .coming-soon p {
+                font-size: 1.25rem;
+                margin-bottom: 30px;
+            }
+
+            .coming-soon .btn {
+                font-size: 1.1rem;
+                padding: 10px 20px;
+            }
+    </style>
+}
+
+<div class="coming-soon">
+    <h1>即將推出</h1>
+    <p>我們正在努力為您準備一個更好的體驗，敬請期待！</p>
+    <a href="/" class="btn btn-primary">返回首頁</a>
+</div>

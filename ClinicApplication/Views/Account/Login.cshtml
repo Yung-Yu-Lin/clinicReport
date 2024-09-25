@@ -1,0 +1,27 @@
+﻿@model LoginViewModel
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        alert("@Html.Raw(TempData["ErrorMessage"].ToString())");
+    </script>
+}
+
+
+<body>
+    <div class="container">
+        <h2>診所端登入</h2>
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div class="form-group">
+                <label for="username">帳號:</label>
+                <input type="text" class="form-control" id="username" asp-for="Username" placeholder="請輸入您的診所代號" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密碼:</label>
+                <input type="password" class="form-control" id="password" asp-for="Password" placeholder="請輸入您的診所密碼" required>
+            </div>
+            <button type="submit" class="btn btn-primary">登入</button>
+        </form>
+    </div>
+</body>
