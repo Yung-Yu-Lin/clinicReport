@@ -5,10 +5,24 @@ using System.Reflection.Emit;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    private readonly string _connectionString;
+
+    //public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    //    : base(options)
+    //{
+    //}
+    public ApplicationDbContext(string connectionString)
     {
+        _connectionString = connectionString;
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured) {
+            optionsBuilder.UseSqlServer(_connectionString);
+        }
+    }
+
     public DbSet<Customer> Customer { get; set; }
     public DbSet<TestDOC> TestDOC { get; set; }
     public DbSet<TestDetail> TestDetail { get; set; }

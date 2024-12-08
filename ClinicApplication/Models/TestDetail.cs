@@ -75,5 +75,7 @@ namespace ClinicApplication.Models
 
         [Column("IsChkD")]
         public bool? IsChkD { get; set; }
+        [Column("IsVerify")]
+        public bool? IsVerify { get; set; }
     }
 }

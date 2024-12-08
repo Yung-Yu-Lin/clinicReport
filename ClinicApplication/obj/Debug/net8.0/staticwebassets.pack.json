@@ -25,6 +25,42 @@
       "PackagePath": "staticwebassets\\images\\companyStamp.png"
     },
     {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\companyStamp2.png",
+      "PackagePath": "staticwebassets\\images\\companyStamp2.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\android-chrome-192x192.png",
+      "PackagePath": "staticwebassets\\images\\favicon\\android-chrome-192x192.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\android-chrome-512x512.png",
+      "PackagePath": "staticwebassets\\images\\favicon\\android-chrome-512x512.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\apple-touch-icon.png",
+      "PackagePath": "staticwebassets\\images\\favicon\\apple-touch-icon.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\favicon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\favicon\\favicon-16x16.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\favicon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\favicon\\favicon-32x32.png"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\favicon\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\favicon\\site.webmanifest",
+      "PackagePath": "staticwebassets\\images\\favicon\\site.webmanifest"
+    },
+    {
+      "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\inspectorStamp.png",
+      "PackagePath": "staticwebassets\\images\\inspectorStamp.png"
+    },
+    {
       "Id": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\images\\personal.png",
       "PackagePath": "staticwebassets\\images\\personal.png"
     },

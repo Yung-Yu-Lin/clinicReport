@@ -34,5 +34,6 @@
         public string? Address { get; set; }
         public string? SubmittingUnitRemarks { get; set; }
         public string? InstitutionCode { get; set; }
+        public string? InspDate { get; set; } // 採檢時間
     }
 }

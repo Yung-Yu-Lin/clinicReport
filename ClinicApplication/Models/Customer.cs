@@ -204,7 +204,7 @@ namespace ClinicApplication.Models
 		[Column("ppEmail")]
 		public bool? PpEmail { get; set; }
 
-		[Column("Sales")]
-		public string? Sales { get; set; }
+		//[Column("Sales")]
+		//public string? Sales { get; set; }
 	}
 }

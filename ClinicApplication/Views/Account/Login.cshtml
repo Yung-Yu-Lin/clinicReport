@@ -1,5 +1,7 @@
 ﻿@model LoginViewModel
-
+@{
+    var connectionName = ViewBag.ConnectionName;
+}
 @if (TempData["ErrorMessage"] != null)
 {
     <script>
@@ -10,9 +12,17 @@
 
 <body>
     <div class="container">
-        <h2>診所端登入</h2>
+        @if (connectionName == "DefaultConnection")
+        {
+            <h2>診所端登入 - 現代醫事檢驗所</h2>
+        }
+        else
+        {
+            <h2>診所端登入 - 晴美醫事檢驗所</h2>
+        }
 
         <form asp-controller="Account" asp-action="Login" method="post">
+            <input type="hidden" name="connectionName" value="@connectionName" />
             <div class="form-group">
                 <label for="username">帳號:</label>
                 <input type="text" class="form-control" id="username" asp-for="Username" placeholder="請輸入您的診所代號" required>

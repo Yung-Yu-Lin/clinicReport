@@ -1,0 +1,165 @@
+﻿@{
+    ViewData["Title"] = "外送轉出匯入模組";
+    @model ExportExcelLogViewModel
+}
+
+<div class="container mt-4">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mt-4">@TempData["Error"]</div>
+    }
+</div>
+
+<div class="container mt-4">
+    <h3>步驟 1: 上傳 Excel 檔案</h3>
+    <form method="post" enctype="multipart/form-data" asp-action="UploadExcel">
+        <div class="mb-3">
+            <label for="excelFile" class="form-label">只接受 EXCEL 格式檔案:</label>
+            <input type="file" name="excelFile" id="excelFile" class="form-control" accept=".xlsx, .xls" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">上傳</button>
+    </form>
+</div>
+
+<div class="container mt-4">
+    @if (Model == null)
+    {
+        <h3>步驟 2: 預覽上傳檔案</h3>
+    }
+    else
+    {
+        <h3>步驟 2: 預覽上傳檔案 共 @Model.ExcelExportLogList.Count 筆資料</h3>
+    }
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>診別</th> <!-- Diagnosis Type -->
+                <th>病患姓名</th> <!-- Patient Name -->
+                <th>性別</th> <!-- Gender -->
+                <th>身分證號</th> <!-- ID Number -->
+                <th>出生日期</th> <!-- Birth Date -->
+                <th>科別</th> <!-- Department -->
+                <th>開單醫生</th> <!-- Prescribing Doctor -->
+                <th>看診日</th> <!-- Consultation Date -->
+                <th>病歷號</th> <!-- Medical Record Number -->
+                <th>序號</th> <!-- Serial Number -->
+                <th>檢驗代碼</th> <!-- Test Code -->
+                <th>細項代碼</th> <!-- Subitem Code -->
+                <th>細項名稱</th> <!-- Subitem Name -->
+                <th>傳送碼</th> <!-- Transmission Code -->
+                <th>採樣日期</th> <!-- Sampling Date -->
+                <th>報到人</th> <!-- Reporter -->
+                <th>組別</th> <!-- Group Name -->
+                <th>上機號</th> <!-- Machine Number -->
+                <th>醫令序號</th> <!-- Order Serial Number -->
+                <th>檢驗名稱</th> <!-- Test Name -->
+                <th>檢體數量</th> <!-- Specimen Quantity -->
+                <th>外送地代碼</th> <!-- External Delivery Code -->
+                <th>外送地名稱</th> <!-- External Delivery Name -->
+                <th>健保碼</th> <!-- Insurance Code -->
+                <th>病床號</th> <!-- Bed Number -->
+                <th>檢體名稱</th> <!-- Specimen Name -->
+                <th>就醫序號</th> <!-- Visit Serial Number -->
+                <th>主診斷碼</th> <!-- Primary Diagnosis Code -->
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                int index = 1;
+                foreach (var log in Model.ExcelExportLogList)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@log.DiagnosisType</td>
+                        <td>@log.PatientName</td>
+                        <td>@log.Gender</td>
+                        <td>@log.IdNumber</td>
+                        <td>@log.BirthDate</td>
+                        <td>@log.Department</td>
+                        <td>@log.PrescribingDoctor</td>
+                        <td>@log.ConsultationDate</td>
+                        <td>@log.MedicalRecordNumber</td>
+                        <td>@log.SerialNumber</td>
+                        <td>@log.TestCode</td>
+                        <td>@log.SubitemCode</td>
+                        <td>@log.SubitemName</td>
+                        <td>@log.TransmissionCode</td>
+                        <td>@log.SamplingDate</td>
+                        <td>@log.Reporter</td>
+                        <td>@log.GroupName</td>
+                        <td>@log.MachineNumber</td>
+                        <td>@log.OrderSerialNumber</td>
+                        <td>@log.TestName</td>
+                        <td>@log.SpecimenQuantity</td>
+                        <td>@log.ExternalDeliveryCode</td>
+                        <td>@log.ExternalDeliveryName</td>
+                        <td>@log.InsuranceCode</td>
+                        <td>@log.BedNumber</td>
+                        <td>@log.SpecimenName</td>
+                        <td>@log.VisitSerialNumber</td>
+                        <td>@log.PrimaryDiagnosisCode</td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="30" class="text-center">No data available</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+
+<div class="container mt-4">
+    <h3>步驟 3: 下載轉出檔案</h3>
+    <button type="submit" class="btn btn-success" style="width: 100%;" onclick="downloadExcel()">下載</button>
+</div>
+
+<script>
+    async function downloadExcel() {
+        try {
+            // Replace with the actual API URL
+            const apiUrl = '/Home/ExportToExcel';
+
+            // Data to send (from the server-side model)
+            const data = @Html.Raw(Json.Serialize(Model));
+            console.log(data);
+
+            // Call the API
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const lastDotIndex = data.excelFilePath.lastIndexOf('.');
+                const fileExtension = lastDotIndex !== -1 ? data.excelFilePath.substring(lastDotIndex).toLowerCase() : '';
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '檢體轉出結果' + fileExtension;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                window.URL.revokeObjectURL(url);
+            } else {
+                alert('Error: Could not download the file.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+</script>

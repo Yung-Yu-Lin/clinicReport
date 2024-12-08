@@ -1,0 +1,169 @@
+﻿@model List<ClinicApplication.Models.InspectionViewModel>
+
+<div class="container" id="report">
+    <!-- Header Section -->
+    <div class="header text-center">
+        <h1 style="color: black">@Constants.ClinicName</h1>
+        <p>檢驗報告單</p>
+        <p>@Constants.ClinicAddress；電話 : @Constants.ClinicPhone；傳真 : @Constants.ClinicFax</p>
+    </div>
+
+    <!-- Patient Details Section -->
+    <div class="patient-details">
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td style="font-size: 14px"><strong>檢體編號:</strong> @Model.FirstOrDefault().SNO</td>
+                    <td style="font-size: 14px">
+                        <strong>身分證字號:</strong> @Html.Raw(Model.FirstOrDefault().IDNumber.Substring(0, Math.Max(0, Model.FirstOrDefault().IDNumber.Length - 6)))@Html.Raw(new string('*', 6))
+                    </td>
+                    <td style="font-size: 14px"><strong>病歷編號:</strong> </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px"><strong>姓名:</strong> @Model.FirstOrDefault().Name</td>
+                    <td style="font-size: 14px"><strong>性別:</strong> @Model.FirstOrDefault().Gender</td>
+                    <td style="font-size: 14px"><strong>生日:</strong> @Model.FirstOrDefault().DateOfBirth &nbsp;<strong>年齡:</strong> @Model.FirstOrDefault().Age</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px"><strong>檢體種類:</strong> @Model.FirstOrDefault().Name</td>
+                    <td style="font-size: 14px"><strong></strong></td>
+                    <td style="font-size: 14px"><strong>檢體標示:</strong></td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px"><strong>採檢日期:</strong> @Model.FirstOrDefault().InspDate</td>
+                    <td style="font-size: 14px"><strong>接收時間:</strong> @Model.FirstOrDefault().AuditDate @Model.FirstOrDefault().AuditTime</td>
+                    <td style="font-size: 14px"><strong>送檢電話:</strong> @Constants.ClinicPhone</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px"><strong>送檢單位:</strong> @Model.FirstOrDefault().SubmittingUnit</td>
+                    <td style="font-size: 14px"><strong></strong></td>
+                    <td style="font-size: 14px"><strong>送檢傳真:</strong> @Constants.ClinicFax</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Hematology Results Section -->
+    <div class="hematology-results">
+        <button id="btnPrint" 
+                type="button" 
+                class="btn btn-warning" 
+                style="float: right; margin-bottom: 20px;"
+                onclick="generatePDF(`@Model.FirstOrDefault().InspectionSerialNo`, `@Model.FirstOrDefault().Name`)">
+            <i class="fas fa-file-pdf"></i> 列印報告
+        </button>
+        <table style="width: 100%;">
+            <colgroup>
+                <col style="width: 40%;" /> <!-- 30% width for the first column -->
+                <col style="width: 15%;" /> <!-- 20% width for the second column -->
+                <col style="width: 15%;" /> <!-- 20% width for the third column -->
+                <col style="width: 30%;" /> <!-- 30% width for the fourth column -->
+            </colgroup>
+            <thead class="thead-light" style="background-color: white!important; color: blue!important;border-bottom: 1px solid black;">
+                <tr>
+                    <th>檢驗項目</th>
+                    <th>檢驗值</th>
+                    <th>單位</th>
+                    <th>參考區間</th>
+                </tr>
+            </thead>
+            <tbody style="border-bottom: 1px solid black;">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model[i];
+                    <tr>
+                        <td>@item.InspectionItem<br />@item.ChineseName</td>
+                        <td>@item.Result</td>
+                        <td>@item.Unit</td>
+                        <td>@item.BiologicalReferenceRange</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4" style="padding-top: 20px; padding-bottom: 20px;padding-left:50px;">
+                        <strong style="color: blue!important;">SYMCI 檢驗機構:@Constants.ClinicName</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Signature Section -->
+    <div>
+        <div style="text-align: right;">
+            <img style="display: inline-block;width: 100px;" src="/images/companyStamp2.png" alt="Inspection Organization Signature">
+            <img style="display: inline-block;width: 100px;margin-left: 20px;" src="/images/inspectorStamp.png" alt="Inspection Organization Signature">
+        </div>
+        <p>
+            報告簽署人:
+            @(Model.FirstOrDefault()?.Reporter ?? "*報告尚未完成*")&nbsp;&nbsp;&nbsp;
+            報告覆核人:
+            @(Model.FirstOrDefault()?.Reviewer ?? "*報告尚未完成*")&nbsp;&nbsp;&nbsp;
+            列印時間:
+            @DateTime.Now
+        </p>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Copyright © 2024 現代醫事檢驗所. 保留一切權利。</p>
+    </div>
+</div>
+
+<script>
+    function generatePDF(code, patientName) {
+        // Hide the button
+        var btnPrint = document.getElementById("btnPrint");
+        if (btnPrint) {
+            btnPrint.style.display = 'none';
+        }
+
+        // Prepare PDF options
+        var element = document.getElementById("report");
+        var opt = {
+            margin: [0.5, 0.5, 0.5, 0.5], // top, right, bottom, left
+            filename: `${code} - ${patientName} 檢驗報告.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: [8.5, 11], orientation: 'portrait' } // Letter size
+        };
+
+        // Generate the PDF
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+            // Calculate scale to fit content
+            var pdfPageHeight = pdf.internal.pageSize.height;
+            var pdfPageWidth = pdf.internal.pageSize.width;
+            var contentHeight = element.offsetHeight * (pdf.internal.pageSize.width / element.offsetWidth);
+
+            // Calculate scale factor
+            var scale = Math.min(pdfPageHeight / contentHeight, pdfPageWidth / element.offsetWidth);
+
+            // Apply scaling
+            if (scale < 1) {
+                pdf.internal.scale(scale);
+            }
+
+            // Show the button again after PDF generation is complete
+            if (btnPrint) {
+                btnPrint.style.display = 'inline'; // or 'block', depending on your layout
+            }
+        }).save();
+    }
+</script>
+
+
+@* <script>
+    function generatePDF(sno) {
+
+        fetch(`/PDF/GeneratePdf?sno=${sno}`, {
+            method: 'GET',
+        })
+            .then(response => response.blob()) // Get the PDF as a blob
+            .then(blob => {
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'ClinicReport.pdf';
+                link.click();
+            })
+            .catch(error => console.error('Error generating PDF:', error));
+    }
+</script> *@

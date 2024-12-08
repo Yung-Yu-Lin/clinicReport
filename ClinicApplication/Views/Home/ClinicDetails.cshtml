@@ -56,7 +56,14 @@
                     <tr>
 						<td>@(i + 1)</td>
                         <td>@item.InspectionItem<br />@item.ChineseName</td>
-                        <td>@item.Result</td>
+                        @if (@item.Interpretation != "")
+                        {
+                            <td style="color: red;">@item.Result</td>
+                        }
+                        @if (@item.Interpretation == "")
+                        {
+                            <td style="color: black;">@item.Result</td>
+                        }
                         <td>@item.Interpretation</td>
                         <td>@item.BiologicalReferenceRange</td>
                         <td>@item.Unit</td>

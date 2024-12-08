@@ -4,10 +4,35 @@
     <h1>Welcome, @Model.customer.Name!</h1>
     <p>您的登入帳號: @Model.customer.Id</p>
     <p>&nbsp;</p>
+    @if (Model.customer.Id == "G001")
+    {
+        <div class="container" style="max-width: 600px;max-width: 600px;bottom: 50px;left: 350px;z-index: 1050;position: relative;float: right;">
+            <!-- Bottom-right corner -->
+            <div class="row">
+                <div class="col text-center">
+                    <button type="button" class="btn btn-success btn-lg d-flex align-items-center justify-content-center"
+                            onclick="window.location.href='@Url.Action("ExcelImport", "Home")'">
+                        <i class="bi bi-file-earmark-excel me-2" style="font-size: 1.5rem;"></i>
+                        外送轉出匯入模組
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
     @* <p>您機構的所在地址: @Model.customer.Address</p> *@
 </div>
 
 <br/>
+
+<div class="form-group">
+    <label for="dropdownMenu" class="form-label">報告格式</label>
+    <select class="form-select" id="dropdownMenu">
+        <option value="1">報告樣式1</option>
+        <option value="2">報告樣式2</option>
+        <option value="3">報告樣式3</option>
+    </select>
+</div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5>總筆數:</h5>
@@ -66,7 +91,11 @@
                 <td style="color: @(item.IsPass ==true ? "green" : "red")">@(item.IsPass == true ? "是" : "否")</td>
                 <td>@item.RecDate</td>
                 <td>
-                    <button type="button" class="btn btn-success" onclick="window.open('@Url.Action("ClinicDetails", "Home", new { id = item.SNO })', '_blank')">查看報告</button>
+                    <button type="button" 
+                            class="btn btn-success btn-sm"
+                            onclick="clickToReportDetail('@item.SNO')">
+                        查看報告
+                    </button>
                 </td>
             </tr>
         }
@@ -74,6 +103,22 @@
 </table>
 
 <script>
+    function clickToReportDetail(sno) {
+        const dropdown = document.getElementById('dropdownMenu');
+        const selectedValue = dropdown.value;
+        switch (selectedValue) {
+            case "1":
+                window.open(`@Constants.ClinicDetailsUrl_1?id=${sno}`, '_blank');
+                break;
+            case "2":
+                window.open(`@Constants.ClinicDetailsUrl_2?id=${sno}`, '_blank');
+                break;
+            case "3":
+                window.open(`@Constants.ClinicDetailsUrl_3?id=${sno}`, '_blank');
+                break;
+        }
+    }
+
     // Get the current date
     var now = new Date();
 
@@ -138,7 +183,7 @@
                         cell3.innerHTML = item.orderNo;
                         cell4.innerHTML = item.isPass ? "是" : "否";
                         cell5.innerHTML = item.recDate;
-                        cell6.innerHTML = '<button type="button" class="btn btn-success" onclick="window.open(\'' + '@Url.Action("ClinicDetails", "Home")' + '?id=' + item.sno + '\', \'_blank\')">查看報告</button>';
+                        cell6.innerHTML = '<button type="button" class="btn btn-success" onclick="clickToReportDetail('+ item.sno +')">查看報告</button>';
                     });
 
                     document.getElementById("totalItems").textContent = responseObject.data.length + " 筆";

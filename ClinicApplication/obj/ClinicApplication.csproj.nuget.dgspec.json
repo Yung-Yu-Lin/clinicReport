@@ -49,6 +49,10 @@
               "target": "Package",
               "version": "[1.0.8, )"
             },
+            "EPPlus": {
+              "target": "Package",
+              "version": "[5.8.14, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.8, )"
@@ -56,6 +60,10 @@
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "NPOI": {
+              "target": "Package",
+              "version": "[2.7.2, )"
             }
           },
           "imports": [
