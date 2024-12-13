@@ -27,6 +27,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<TestDOC> TestDOC { get; set; }
     public DbSet<TestDetail> TestDetail { get; set; }
     public DbSet<Items> Items { get; set; }
+    public DbSet<ItemsNameMapping> ItemsNameMapping { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

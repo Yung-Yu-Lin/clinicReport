@@ -212,8 +212,21 @@ namespace ClinicApplication.Services
             return result;
         }
 
+        // 轉換檢驗項目名稱
+        public string GetInDatabaseItemName(string connectionName, string itemName, string custID)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext(connectionName);
+            var inDatabaseName = dbContext.ItemsNameMapping
+                                .Where(m => m.CustId == custID && m.ConvertedName == itemName && m.IsActive == 1)
+                                .Select(m => m.InDatabaseName)
+                                .FirstOrDefault();
+
+            return inDatabaseName ?? itemName;
+        }
+
         // 取得 勤美-安泰 外送格式結果(完整時間 完報人 結果值 狀態值)
-        public InspectionViewModel? GetExportDetail(string connectionName, string patientName, string inspDate, string itemName)
+        // 看診日期不准，拿掉改用病歷號碼去對
+        public InspectionViewModel? GetExportDetail(string connectionName, string patientName, string inspDate, string itemName, string medicalRecordNumber)
         {
             using var dbContext = _dbContextFactory.CreateDbContext(connectionName);
             var query = from a in dbContext.TestDOC
@@ -223,8 +236,8 @@ namespace ClinicApplication.Services
                         from c in bc.DefaultIfEmpty()
                         join d in dbContext.Customer on a.CustID equals d.Id into ad
                         from d in ad.DefaultIfEmpty()
-                        where a.CustID == "G001" && a.InspDate == inspDate && a.SubName == patientName && b.Name == itemName && b.IsVerify == true
-                        orderby b.SetID, b.SubID
+                        where a.CustID == "G001" && a.SubName == patientName && b.Name == itemName && b.IsVerify == true && a.MedicalNo == medicalRecordNumber
+                        orderby a.AuditDay descending
                         select new InspectionViewModel
                         {
                             SNO = a.SNO,

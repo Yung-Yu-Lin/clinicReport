@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "LJYfNI32MQJfELSzc+OLW2E+VSKBDCczq/SI5H5ASTY=",
+  "Hash": "7qudscG9zbR9/HL7SEvSSlvF1NiEGp3YeJAUBJnVlj4=",
   "Source": "ClinicApplication",
   "BasePath": "_content/ClinicApplication",
   "Mode": "Default",
@@ -1440,6 +1440,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\UserUpload\\50598093-b622-4c30-afcf-3d18daa8c94c.xls",
+      "SourceId": "ClinicApplication",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER.DESKTOP-J8J2E8C\\Desktop\\C_API\\ClinicApplication\\ClinicApplication\\wwwroot\\",
+      "BasePath": "_content/ClinicApplication",
+      "RelativePath": "UserUpload/50598093-b622-4c30-afcf-3d18daa8c94c.xls",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\UserUpload\\50598093-b622-4c30-afcf-3d18daa8c94c.xls"
     }
   ]
 }

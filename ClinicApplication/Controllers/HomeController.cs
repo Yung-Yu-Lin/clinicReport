@@ -253,8 +253,11 @@ namespace ClinicApplication.Controllers
                     {
                         var log = viewModel.ExcelExportLogList[rowIndex];
                         string formattedConsultationDate = log.ConsultationDate.Insert(3, "/").Insert(6, "/");
-
-                        InspectionViewModel? detailInfo = _clinicService.GetExportDetail(connectionName, log.PatientName, formattedConsultationDate, log.SubitemName);
+                        // 轉換檢驗項目名稱
+                        string convertItemName = _clinicService.GetInDatabaseItemName(connectionName, log.SubitemName, "G001");
+                        // 轉換病歷號
+                        string convertMedicalRecordNumber = log.MedicalRecordNumber.TrimStart('0');
+                        InspectionViewModel? detailInfo = _clinicService.GetExportDetail(connectionName, log.PatientName, formattedConsultationDate, convertItemName, convertMedicalRecordNumber);
                         
                         var row = sheet.CreateRow(rowIndex + 1); // Data starts from the second row
 
